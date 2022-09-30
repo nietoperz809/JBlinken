@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JBlinken:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JBlinken_jar</output-path>
+    <root id="archive" name="JBlinken.jar">
+      <element id="module-output" name="JBlinken" />
+    </root>
+  </artifact>
+</component>

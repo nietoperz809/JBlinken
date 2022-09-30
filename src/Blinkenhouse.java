@@ -3,14 +3,19 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Blinkenhouse {
     // Relative offsets of windows
-    private static final int[] xp
+    private static final int[] winPosX
             = {23, 36, 49, 62, 75, 88, 101, 114, 127, 140, 153, 166, 179, 192, 205, 218, 231, 244};
-    private static final int[] yp
+    private static final int[] winPosY
             = {46, 70, 94, 118, 142, 166, 190, 214};
-    private final boolean[][] state = new boolean[xp.length][yp.length];
+    private final boolean[][] state = new boolean[winPosX.length][winPosY.length];
     private final BufferedImage houseImg;
     private final BufferedImage winImg;
     private final BufferedImage offImg;
@@ -30,25 +35,73 @@ public class Blinkenhouse {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON3) {
-                            JFileChooser fileChooser = new JFileChooser();
-                            fileChooser.setDialogTitle("Load and play movie file ...");
-                            fileChooser.showOpenDialog(Blinkenhouse.this.panel);
+                            JFileChooser fc = new JFileChooser();
+                            fc.setDialogTitle("Load and play movie file ...");
+                            if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(Blinkenhouse.this.panel)) {
+                                SwingUtilities.invokeLater(() -> {
+                                    try {
+                                        playFile(fc.getSelectedFile());
+                                    } catch (IOException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                });
+                            }
                             return;
                         }
+                        handleMouseClicks(e);
+                    }
+
+                    private void playBlock(String inStr) {
+                        if (inStr.isEmpty() || inStr.startsWith("#"))
+                            return;
+                        if (inStr.startsWith("@")) {
+                            String lines[] = inStr.split(System.lineSeparator());
+                            if (lines.length != 9) {
+                                System.out.println("Block mismatch");
+                                return;
+                            }
+                            Blinkenhouse.this.clear();
+                            for (int i = 0; i < 8; i++) {
+                                char[] bits = lines[i + 1].toCharArray();
+                                for (int j = 0; j < bits.length; j++) {
+                                    if (bits[j] == '1') {
+                                        Blinkenhouse.this.set(j, i);
+                                    }
+                                }
+                            }
+                            Graphics g = Blinkenhouse.this.panel.getGraphics();
+                            Blinkenhouse.this.panel.paint(g);
+                            Utils.delay(Integer.parseInt(lines[0].substring(1)));
+                            //System.out.println(lines);
+                        } else {
+                            System.out.println("Error in Block " + inStr);
+                        }
+                    }
+
+                    private void playFile(File f) throws IOException {
+                        byte[] encoded = Files.readAllBytes(Paths.get(f.getAbsolutePath()));
+                        String str = new String(encoded, StandardCharsets.UTF_8.name());
+                        String[] blocks = str.split("((\\n\\r)|(\\r\\n)){2}|(\\r){2}|(\\n){2}");
+                        for (String s : blocks) {
+                            playBlock(s);
+                        }
+                    }
+
+                    private void handleMouseClicks(MouseEvent e) {
                         float xscale = (float) houseImg.getWidth() / (float) getWidth();
                         float yscale = (float) houseImg.getHeight() / (float) getHeight();
                         int x = (int) (e.getX() * xscale);
                         int y = (int) (e.getY() * yscale);
                         int ix = -1;
                         int iy = -1;
-                        for (int s = 0; s < xp.length; s++) {
-                            if (Utils.isBetween(x, xp[s], xp[s] + winImg.getWidth())) {
+                        for (int s = 0; s < winPosX.length; s++) {
+                            if (Utils.isBetween(x, winPosX[s], winPosX[s] + winImg.getWidth())) {
                                 ix = s;
                                 break;
                             }
                         }
-                        for (int s = 0; s < yp.length; s++) {
-                            if (Utils.isBetween(y, yp[s], yp[s] + winImg.getHeight())) {
+                        for (int s = 0; s < winPosY.length; s++) {
+                            if (Utils.isBetween(y, winPosY[s], winPosY[s] + winImg.getHeight())) {
                                 iy = s;
                                 break;
                             }
@@ -86,12 +139,12 @@ public class Blinkenhouse {
         for (int i = 0; i < state[0].length; i++) {
             for (int j = 0; j < state.length; j++) {
                 if (state[j][i])
-                    offG.drawImage(winImg, xp[j], yp[i], null);
+                    offG.drawImage(winImg, winPosX[j], winPosY[i], null);
             }
         }
     }
 
     public void set(int x, int y) {
-        offG.drawImage(winImg, xp[x], yp[y], null);
+        offG.drawImage(winImg, winPosX[x], winPosY[y], null);
     }
 }
