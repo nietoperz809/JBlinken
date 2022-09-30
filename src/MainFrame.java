@@ -6,6 +6,7 @@ public class MainFrame extends JFrame {
     Blinkenhouse blink = new Blinkenhouse();
 
     public MainFrame() {
+        setIconImage (Utils.getImg("bm_play.jpg"));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout (new BorderLayout());
         add (BorderLayout.CENTER, blink.gePanel());

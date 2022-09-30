@@ -10,7 +10,7 @@ public class Blinkenhouse {
             = {23, 36, 49, 62, 75, 88, 101, 114, 127, 140, 153, 166, 179, 192, 205, 218, 231, 244};
     private static final int[] yp
             = {46, 70, 94, 118, 142, 166, 190, 214};
-
+    private final boolean[][] state = new boolean[xp.length][yp.length];
     private final BufferedImage houseImg;
     private final BufferedImage winImg;
     private final BufferedImage offImg;
@@ -28,36 +28,41 @@ public class Blinkenhouse {
             {
                 addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
-                        int xw = winImg.getWidth();
-                        int yw = winImg.getHeight();
-                        float xscale = (float)houseImg.getWidth()/(float)getWidth();
-                        float yscale = (float)houseImg.getHeight()/(float)getHeight();
-                        int x = (int) (e.getX()*xscale);
-                        int y = (int) (e.getY()*yscale);
+                    public void mousePressed(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            JFileChooser fileChooser = new JFileChooser();
+                            fileChooser.setDialogTitle("Load and play movie file ...");
+                            fileChooser.showOpenDialog(Blinkenhouse.this.panel);
+                            return;
+                        }
+                        float xscale = (float) houseImg.getWidth() / (float) getWidth();
+                        float yscale = (float) houseImg.getHeight() / (float) getHeight();
+                        int x = (int) (e.getX() * xscale);
+                        int y = (int) (e.getY() * yscale);
                         int ix = -1;
                         int iy = -1;
-                        for (int s=0; s<xp.length; s++) {
-                            if (Utils.isBetween(x, xp[s], xp[s] + xw)) {
+                        for (int s = 0; s < xp.length; s++) {
+                            if (Utils.isBetween(x, xp[s], xp[s] + winImg.getWidth())) {
                                 ix = s;
                                 break;
                             }
                         }
-                        for (int s=0; s<yp.length; s++) {
-                            if (Utils.isBetween(y, yp[s], yp[s] + yw)) {
+                        for (int s = 0; s < yp.length; s++) {
+                            if (Utils.isBetween(y, yp[s], yp[s] + winImg.getHeight())) {
                                 iy = s;
                                 break;
                             }
                         }
                         if (ix == -1 || iy == -1)
                             return;
-                        offG.drawImage(winImg, xp[ix], yp[iy], null);
+                        state[ix][iy] = !state[ix][iy];
+                        clear();
+                        drawWindows();
                         repaint();
-                        //System.out.println(x+"/"+y);
-                        //System.out.println(ix+"/"+iy);
                     }
                 });
             }
+
             @Override
             public void paint(Graphics g) {
                 g.drawImage(offImg, 0, 0, getWidth(), getHeight(), null);
@@ -74,18 +79,19 @@ public class Blinkenhouse {
     }
 
     public void clear() {
-        offG.drawImage(houseImg, 0,0,null);
+        offG.drawImage(houseImg, 0, 0, null);
     }
 
-    public void set (int x, int y) {
+    public void drawWindows() {
+        for (int i = 0; i < state[0].length; i++) {
+            for (int j = 0; j < state.length; j++) {
+                if (state[j][i])
+                    offG.drawImage(winImg, xp[j], yp[i], null);
+            }
+        }
+    }
+
+    public void set(int x, int y) {
         offG.drawImage(winImg, xp[x], yp[y], null);
     }
-
-//    public static void main(String[] args) {
-//        Blinkenhouse bh = new Blinkenhouse();
-//        bh.clear();
-//        bh.set (0,0);
-//        bh.set (7,7);
-//        System.out.println(bh.houseImg);
-//    }
 }
