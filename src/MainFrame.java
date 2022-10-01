@@ -3,13 +3,11 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    Blinkenhouse blink = new Blinkenhouse();
-
     public MainFrame() {
         setIconImage (Utils.getImg("bm_play.jpg"));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout (new BorderLayout());
-        add (BorderLayout.CENTER, blink.gePanel());
+        add (BorderLayout.CENTER, new Blinkenhouse());
         setSize (500,500);
         setVisible(true);
     }

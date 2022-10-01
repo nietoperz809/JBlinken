@@ -9,18 +9,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Blinkenhouse {
+public class Blinkenhouse extends JPanel {
     // Relative offsets of windows
     private static final int[] winPosX
             = {23, 36, 49, 62, 75, 88, 101, 114, 127, 140, 153, 166, 179, 192, 205, 218, 231, 244};
     private static final int[] winPosY
             = {46, 70, 94, 118, 142, 166, 190, 214};
     private final boolean[][] state = new boolean[winPosX.length][winPosY.length];
-    private final BufferedImage houseImg;
-    private final BufferedImage winImg;
-    private final BufferedImage offImg;
-    private final Graphics2D offG;
-    private final JPanel panel;
+    private BufferedImage houseImg = null;
+    private BufferedImage winImg = null;
+    private BufferedImage offImg = null;
+    private Graphics2D offG = null;
 
     public Blinkenhouse() {
         houseImg = Utils.getImg("HOUSE.bmp");
@@ -29,70 +28,70 @@ public class Blinkenhouse {
                 (houseImg.getWidth(), houseImg.getHeight(), BufferedImage.TYPE_INT_RGB);
         offG = (Graphics2D) offImg.getGraphics();
         clear();
-        panel = new JPanel() {
-            {
-                setToolTipText("Right mouse button opens movie file ...");
-                addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        if (e.getButton() == MouseEvent.BUTTON3) {
-                            JFileChooser fc = new JFileChooser();
-                            fc.setDialogTitle("Load and play movie file ...");
-                            if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(Blinkenhouse.this.panel)) {
-                                SwingUtilities.invokeLater(() -> {
-                                    try {
-                                        playFile(fc.getSelectedFile());
-                                    } catch (IOException ex) {
-                                        throw new RuntimeException(ex);
-                                    }
-                                });
-                            }
-                            return;
-                        }
-                        handleMouseClicks(e);
-                    }
-
-                    private void handleMouseClicks(MouseEvent e) {
-                        float xscale = (float) houseImg.getWidth() / (float) getWidth();
-                        float yscale = (float) houseImg.getHeight() / (float) getHeight();
-                        int x = (int) (e.getX() * xscale);
-                        int y = (int) (e.getY() * yscale);
-                        int ix = -1;
-                        int iy = -1;
-                        for (int s = 0; s < winPosX.length; s++) {
-                            if (Utils.isBetween(x, winPosX[s], winPosX[s] + winImg.getWidth())) {
-                                ix = s;
-                                break;
-                            }
-                        }
-                        for (int s = 0; s < winPosY.length; s++) {
-                            if (Utils.isBetween(y, winPosY[s], winPosY[s] + winImg.getHeight())) {
-                                iy = s;
-                                break;
-                            }
-                        }
-                        if (ix == -1 || iy == -1)
-                            return;
-                        state[ix][iy] = !state[ix][iy];
-                        clear();
-                        drawWindows();
-                        repaint();
-                    }
-                });
-            }
-
+        setToolTipText("Right mouse button opens movie file ...");
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void paint(Graphics g) {
-                g.drawImage(offImg, 0, 0, getWidth(), getHeight(), null);
+            public void mousePressed(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3)
+                    openAndPlayMovie();
+                else
+                    handleMouseClicks(e);
             }
-        };
+        });
+    }
+
+    private void openAndPlayMovie() {
+        JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle("Load and play movie file ...");
+        if (JFileChooser.APPROVE_OPTION == fc.showOpenDialog(Blinkenhouse.this)) {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    playFile(fc.getSelectedFile());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+    }
+
+    private void handleMouseClicks(MouseEvent e) {
+        float xscale = (float) houseImg.getWidth() / (float) getWidth();
+        float yscale = (float) houseImg.getHeight() / (float) getHeight();
+        int x = (int) (e.getX() * xscale);
+        int y = (int) (e.getY() * yscale);
+        int ix = -1;
+        int iy = -1;
+        for (int s = 0; s < winPosX.length; s++) {
+            if (Utils.isBetween(x, winPosX[s], winPosX[s] + winImg.getWidth())) {
+                ix = s;
+                break;
+            }
+        }
+        for (int s = 0; s < winPosY.length; s++) {
+            if (Utils.isBetween(y, winPosY[s], winPosY[s] + winImg.getHeight())) {
+                iy = s;
+                break;
+            }
+        }
+        if (ix == -1 || iy == -1)
+            return;
+        state[ix][iy] = !state[ix][iy];
+        clear();
+        drawWindows();
+        repaint();
+    }
+
+
+    @Override
+    public void paint(Graphics g) {
+        g.drawImage(offImg, 0, 0, getWidth(), getHeight(), null);
     }
 
     private void playBlock(String inStr) {
         if (inStr.isEmpty())
             return;
         try {
-            inStr = inStr.substring(inStr.indexOf('@', 0));
+            inStr = inStr.substring(inStr.indexOf('@'));
         } catch (Exception e) {
             return;
         }
@@ -108,8 +107,7 @@ public class Blinkenhouse {
                 }
             }
         }
-        Graphics g = panel.getGraphics();
-        panel.paint(g);
+        paint(getGraphics());
         Utils.delay(Integer.parseInt(lines[0].substring(1)));
     }
 
@@ -120,12 +118,8 @@ public class Blinkenhouse {
         for (String s : blocks) {
             playBlock(s);
         }
-        JOptionPane.showMessageDialog(panel, "All done!", "InfoBox:",
+        JOptionPane.showMessageDialog(this, "All done!", "InfoBox:",
                 JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public JPanel gePanel() {
-        return panel;
     }
 
     public void clear() {
