@@ -31,6 +31,7 @@ public class Blinkenhouse {
         clear();
         panel = new JPanel() {
             {
+                setToolTipText("Right mouse button opens movie file ...");
                 addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
@@ -49,42 +50,6 @@ public class Blinkenhouse {
                             return;
                         }
                         handleMouseClicks(e);
-                    }
-
-                    private void playBlock(String inStr) {
-                        if (inStr.isEmpty() || inStr.startsWith("#"))
-                            return;
-                        if (inStr.startsWith("@")) {
-                            String lines[] = inStr.split(System.lineSeparator());
-                            if (lines.length != 9) {
-                                System.out.println("Block mismatch");
-                                return;
-                            }
-                            Blinkenhouse.this.clear();
-                            for (int i = 0; i < 8; i++) {
-                                char[] bits = lines[i + 1].toCharArray();
-                                for (int j = 0; j < bits.length; j++) {
-                                    if (bits[j] == '1') {
-                                        Blinkenhouse.this.set(j, i);
-                                    }
-                                }
-                            }
-                            Graphics g = Blinkenhouse.this.panel.getGraphics();
-                            Blinkenhouse.this.panel.paint(g);
-                            Utils.delay(Integer.parseInt(lines[0].substring(1)));
-                            //System.out.println(lines);
-                        } else {
-                            System.out.println("Error in Block " + inStr);
-                        }
-                    }
-
-                    private void playFile(File f) throws IOException {
-                        byte[] encoded = Files.readAllBytes(Paths.get(f.getAbsolutePath()));
-                        String str = new String(encoded, StandardCharsets.UTF_8.name());
-                        String[] blocks = str.split("((\\n\\r)|(\\r\\n)){2}|(\\r){2}|(\\n){2}");
-                        for (String s : blocks) {
-                            playBlock(s);
-                        }
                     }
 
                     private void handleMouseClicks(MouseEvent e) {
@@ -123,8 +88,40 @@ public class Blinkenhouse {
         };
     }
 
-    public BufferedImage getImg() {
-        return offImg;
+    private void playBlock(String inStr) {
+        if (inStr.isEmpty())
+            return;
+        try {
+            inStr = inStr.substring(inStr.indexOf('@', 0));
+        } catch (Exception e) {
+            return;
+        }
+        String[] lines = inStr.split(System.lineSeparator());
+        if (lines.length != 9)
+            return;
+        clear();
+        for (int i = 0; i < 8; i++) {
+            char[] bits = lines[i + 1].toCharArray();
+            for (int j = 0; j < bits.length; j++) {
+                if (bits[j] == '1') {
+                    set(j, i);
+                }
+            }
+        }
+        Graphics g = panel.getGraphics();
+        panel.paint(g);
+        Utils.delay(Integer.parseInt(lines[0].substring(1)));
+    }
+
+    private void playFile(File f) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(f.getAbsolutePath()));
+        String str = new String(encoded, StandardCharsets.UTF_8);
+        String[] blocks = str.split("((\\n\\r)|(\\r\\n)){2}|(\\r){2}|(\\n){2}");
+        for (String s : blocks) {
+            playBlock(s);
+        }
+        JOptionPane.showMessageDialog(panel, "All done!", "InfoBox:",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public JPanel gePanel() {
