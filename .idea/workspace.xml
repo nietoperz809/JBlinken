@@ -13,10 +13,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11ba776f-1529-4620-94dd-2e0f87677f14" name="Changes" comment="backup">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Blinkenhouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Blinkenhouse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MainFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MainFrame.java" afterDir="false" />
+    <list default="true" id="11ba776f-1529-4620-94dd-2e0f87677f14" name="Changes" comment="blinkenhouse class redesign">
+      <change beforePath="$PROJECT_DIR$/out/artifacts/JBlinken_jar/JBlinken.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/JBlinken_jar/JBlinken.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,7 +140,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664597711297</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="blinkenhouse class redesign">
+      <created>1664610169181</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1664610169181</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -150,7 +155,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="backup" />
-    <option name="LAST_COMMIT_MESSAGE" value="backup" />
+    <MESSAGE value="blinkenhouse class redesign" />
+    <option name="LAST_COMMIT_MESSAGE" value="blinkenhouse class redesign" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
