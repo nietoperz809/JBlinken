@@ -87,17 +87,17 @@ public class Blinkenhouse extends JPanel {
         g.drawImage(offImg, 0, 0, getWidth(), getHeight(), null);
     }
 
-    private void playBlock(String inStr) {
+    private boolean playBlock(String inStr) {
         if (inStr.isEmpty())
-            return;
+            return false;
         try {
             inStr = inStr.substring(inStr.indexOf('@'));
         } catch (Exception e) {
-            return;
+            return false;
         }
         String[] lines = inStr.split(System.lineSeparator());
         if (lines.length != 9)
-            return;
+            return false;
         clear();
         for (int i = 0; i < 8; i++) {
             char[] bits = lines[i + 1].toCharArray();
@@ -109,17 +109,26 @@ public class Blinkenhouse extends JPanel {
         }
         paint(getGraphics());
         Utils.delay(Integer.parseInt(lines[0].substring(1)));
+        return true;
     }
 
     private void playFile(File f) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(f.getAbsolutePath()));
         String str = new String(encoded, StandardCharsets.UTF_8);
         String[] blocks = str.split("((\\n\\r)|(\\r\\n)){2}|(\\r){2}|(\\n){2}");
+        int bcnt = 0;
         for (String s : blocks) {
-            playBlock(s);
+            if (playBlock(s))
+                bcnt++;
         }
-        JOptionPane.showMessageDialog(this, "All done!", "InfoBox:",
-                JOptionPane.INFORMATION_MESSAGE);
+        if (bcnt == 0) {
+            JOptionPane.showMessageDialog(this, "Malformed movie file", "OOOps!",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "All done: "+bcnt, "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void clear() {

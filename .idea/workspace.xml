@@ -13,8 +13,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11ba776f-1529-4620-94dd-2e0f87677f14" name="Changes" comment="blinkenhouse class redesign">
-      <change beforePath="$PROJECT_DIR$/out/artifacts/JBlinken_jar/JBlinken.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/JBlinken_jar/JBlinken.jar" afterDir="false" />
+    <list default="true" id="11ba776f-1529-4620-94dd-2e0f87677f14" name="Changes" comment="new jar">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Blinkenhouse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Blinkenhouse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +148,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664610169181</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="new jar">
+      <created>1664610291548</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1664610291548</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -156,17 +164,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="backup" />
     <MESSAGE value="blinkenhouse class redesign" />
-    <option name="LAST_COMMIT_MESSAGE" value="blinkenhouse class redesign" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Blinkenhouse.java</url>
-          <line>98</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="new jar" />
+    <option name="LAST_COMMIT_MESSAGE" value="new jar" />
   </component>
 </project>
